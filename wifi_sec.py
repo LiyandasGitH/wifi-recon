@@ -31,7 +31,6 @@ AUTHOR = 'liyanda'
 DESCRIPTION = 'Find nearby wifi networks and analyse security details'
 
 def show_menu():
-    os.system('cls' if os.name == 'nt' else 'clear')
     subprocess.run(
         'cls' if os.name == 'nt' else 'clear',
         shell=True
@@ -48,4 +47,14 @@ def show_menu():
     print("6. Exit")
     
     print("-" * 70)
-    
+
+# func : get wifi interfaces
+def get_wifi_interface():
+    interfaces = []
+    for iface in os.listdir('/sys/class/net'):
+        if iface != 'lo':
+            interfaces.append(iface)
+        return interfaces
+
+# func : scan wifi networks
+
