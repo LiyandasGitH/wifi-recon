@@ -77,5 +77,33 @@ def scan_wifi(interface, timeout = 5):
 def parse_network_info(cell):   # extract useful info from scan block
     network = {}
     network['BSSID'] = re.search(r'Address:\s*([0-9A-Fa-f:]{17})', cell)
+    network['SSID'] = re.search(r'ESSID:"(.*)"', cell)
+    network['Channel'] = re.search(r'Channel:(\d+)', cell)
+    network['Frequency'] = re.search(r'Frequency:([\d\.]+)\s*GHz', cell)
+    network['Quality'] = re.search(r'Quality=(\d+)/(\d+)', cell)
+    network['Encryption'] = detect_encryption(cell)
+    network['Signal'] = calculate_signal(network['Quality'])
+    return network
+
+# func : detect encryption type
+def detect_encryption(cell): # detect encryption & security type
+    if 'WPA3' in cell: 
+        return 'WPA3'
+    elif 'WPA2' in cell:
+        return 'WPA2'
+    elif 'WPA' in cell:
+        return 'WPA'
+    elif 'Privacy' in cell:
+        return 'WEP'
+    else:
+        return 'OPEN'
+    
+# func : calculate signal strength 
+def calculate_signal(quality): # convert quality value to percentage
+    try: 
+        q, max_q = map(int, quality.groups())
+        return int((q / max_q) * 100)
+    except:
+        return 0
     
 
